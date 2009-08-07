@@ -1,0 +1,161 @@
+#plain-viewer {
+  padding          : 3em;
+  padding-top      : 6em;
+  background       : #fff url('../img/shadow42.png') repeat-x 0 -25px;
+  white-space      : pre-wrap;
+  font-family      : 'Courier';
+  font-size        : 0.8em;
+  line-height      : 1.3em;
+  margin           : 0;
+}
+
+/* --------------------------------- */
+
+#rich-viewer {
+  padding          : 3em;
+  padding-top      : 6em;
+  min-height       : 120px;
+  background       : #eee url('../img/shadow42.png') repeat-x 0 -15px;
+}
+
+/* All headers. */
+
+#rich-viewer h1,
+#rich-viewer h2,
+#rich-viewer h3,
+#rich-viewer h4,
+#rich-viewer h5,
+#rich-viewer h6 {
+  bborder           : dotted 1px blue;
+  font-weight      : normal;
+  font-family      : 'Georgia';
+  color            : #005;
+}
+
+/* --------------------------------- */
+
+/*
+ * Document header consisting out of a possible title, subtitle and meta
+ * information like author name and location.
+ */
+
+#rich-viewer .header {
+  margin-bottom    : 4em;
+}
+
+#rich-viewer h1 {
+  font-size        : 2.2em;
+  font-style       : italic;
+  text-align       : center;
+}
+
+#rich-viewer h1.sub {
+  font-size        : 1.4em;
+  margin-bottom    : 2em;
+}
+
+#rich-viewer .annotation {
+  font-style       : italic;
+  text-align       : center;
+}
+
+#rich-viewer .author { font-size : 1.3em; }
+#rich-viewer .email  { font-size : 1.1em; }
+
+#rich-viewer .abstract {
+  font-size        : 0.9em;
+  width            : 75%;
+  margin-left      : 6em;
+  margin-bottom    : 4em;
+}
+
+#rich-viewer .abstract h2 {
+  text-align       : center;
+  padding-bottom   : 1em;
+}
+
+#rich-viewer .caption-label {
+  font-size        : 0.85em;
+  text-align       : center;
+  padding-bottom   : 0.6em;
+}
+
+/* --------------------------------- */
+
+/* Sections. */
+
+#rich-viewer div {
+  bborder           : dotted 1px red;
+}
+
+#rich-viewer h3 span,
+#rich-viewer h4 span,
+#rich-viewer h5 span,
+#rich-viewer h6 span {
+  color            : #305;
+  margin           : 0;
+  margin-right     : 0.6em;
+}
+
+/* First level section title. */
+
+#rich-viewer h3 {
+  font-size        : 1.4em;
+  dpadding-top      : 1em;
+  margin-bottom    : 1em;
+  border-bottom    : solid 2px #eee;
+}
+
+/* Second level section title. */
+
+#rich-viewer h4 {
+  font-size        : 1.2em;
+  padding-top      : 0.5em;
+  margin-bottom    : 0.5em;
+  border-bottom    : solid 1px #eee;
+}
+
+/* Third level section title. */
+
+#rich-viewer h5 {
+  font-size        : 1.0em;
+  padding-top      : 0.3em;
+  margin-bottom    : 0.3em;
+  border-bottom    : solid 1px #eee;
+}
+
+/* --------------------------------- */
+
+#rich-viewer p {
+  bborder           : dotted 1px blue;
+  font-family      : 'Georgia';
+  font-size        : 0.9em;
+  line-height      : 1.3em;
+}
+
+#rich-viewer img {
+  float            : right;
+  clear            : both;
+  margin           : 1em;
+}
+
+#rich-viewer ul,
+#rich-viewer ol {
+  padding-left     : 2em;
+}
+
+#rich-viewer li {
+  sborder           : solid 1px red;
+}
+
+#rich-viewer a {
+  color            : #a47;
+  cursor           : pointer;
+  text-decoration  : none;
+}
+
+#rich-viewer a:hover {
+  background-color : white;
+  color            : #b47;
+}
+

@@ -1,0 +1,160 @@
+<html>
+
+<head>
+
+  <link rel="stylesheet" type="text/css" href="style/main.css"></link>
+  <link rel="stylesheet" type="text/css" href="style/page.css"></link>
+  <link rel="stylesheet" type="text/css" href="style/ui.css"></link>
+  <link rel="stylesheet" type="text/css" href="style/viewer.css"></link>
+  <link rel="stylesheet" type="text/css" href="style/plugins.css"></link>
+
+  <script type="text/javascript" src="js/jquery-1.2.6.js"></script>
+  <script type="text/javascript" src="js/jquery.history.js"></script>
+  <script type="text/javascript" src="js/utils.js"></script>
+  <script type="text/javascript" src="js/ui.js"></script>
+  <script type="text/javascript" src="js/app.js"></script>
+
+</head>
+
+<body>
+
+  <table cellpadding="0" cellspacing="0" class="page">
+  <tbody>
+    <tr>
+      <td class="col0 row0"></td>
+      <td class="col1 row0"></td>
+      <td class="col2 row0">&nbsp;</td>
+      <td class="col3 row0"></td>
+      <td class="col4 row0"></td>
+    </tr>
+    <tr>
+      <td class="col0 row1"></td>
+      <td colspan="3" rowspan="3" id="main">
+
+<!-- ====================================================================== -->
+
+        <div id="ui">
+
+          <!-- info section -->
+          <div id="info">
+            document: <span id="document"></span>
+            revision: <span id="revision"></span>
+            <!-- author:   <span id="author"></span> -->
+            user:     <span id="user"></span>
+          </div>
+
+          <!-- toolbar section -->
+          <div id="toolbar">
+            <a id="auth-btn"      class="collapser" target="#auth">login</a>
+            <a id="signup-btn"    class="collapser" target="#signup">signup</a>
+            <a id="format-btn"    class="collapser" target="#format">format</a>
+            <a id="history-btn"   class="collapser" target="#history">history</a>
+            <a id="edit-btn"      class="collapser" target="#editor">edit</a>
+            <a id="searchbar-btn" class="collapser" target="#search">search</a>
+          </div>
+
+          <!-- auth section -->
+          <div id="auth">
+            <input id="user-ui" target="#logout-btn, #save-btn, #delete-btn" type="text"></input>
+            <input name="username" enter="login" target="#login-btn" id="username" type="text" value="username"></input>
+            <input name="password" enter="login" target="#login-btn" id="password" type="password" value="password"></input><br/>
+            <a id="login-btn">login</a>
+            <a id="logout-btn">logout</a>
+            <div id="login-status" class="status">&nbsp;</div>
+          </div>
+
+          <!-- signup section -->
+          <div id="signup">
+            <input name="username" id="su-username" enter="signup" target="#create-account-btn" type="text"     value="username"></input>
+            <input name="password" id="su-password" enter="signup" target="#create-account-btn" type="password" value="password"></input>
+            <input name="email"    id="su-email"    enter="signup" target="#create-account-btn" type="text"     value="e-mail"></input><br/>
+            <a id="create-account-btn">create account</a>
+            <div id="signup-status" class="status">&nbsp;</div>
+          </div>
+
+          <!-- format section -->
+          <div id="format">
+            <span>view format:
+              <a id="txt-btn"   class="option">txt</a>
+              <a id="html-btn"  class="option opted">html</a>
+              <a id="latex-btn" class="option">latex</a>
+              <a id="adt-btn"   class="option">adt</a>
+            </span>
+            <span>open as:
+              <a id="pdf-btn"  >pdf</a>
+              <a id="print-btn">print</a>
+              <a id="src-btn"  >source</a>
+            </span>
+          </div>
+
+          <!-- history section -->
+          <div id="history">
+            <div id="history-status" class="status">&nbsp;</div>
+            <div id="history-results"></div>
+          </div>
+
+          <!-- editor section -->
+          <div id="editor">
+            <textarea id="editField" cols="40"></textarea>
+            <input name="change description" target="#save-btn, #delete-btn, #rename-btn" id="change" type="text" value="change description"></input>
+            <input name="document name" target="#rename-btn" id="rename" type="text" value="document name"></input>
+            <a id="save-btn">save</a>
+            <a id="preview-btn">preview</a>
+            <a id="delete-btn">delete</a>
+            <a id="rename-btn">rename</a>
+            <div id="edit-status" class="status">&nbsp;</div>
+          </div>
+
+          <!-- search section -->
+          <div id="search">
+            <input name="search terms" enter="search" target="#search-btn" id="search-terms" type="text" value="search-terms"></input>
+            <input type="checkbox" class="checkbox" id="search-case" value="no">case sensitive</input><br>
+            <a id="search-btn">search</a>
+            <a id="search-prev-btn" class="disabled">previous results</a>
+            <a id="search-next-btn" class="disabled">next results</a>
+            <div id="search-status" class="status">&nbsp;</div>
+            <div id="search-results"></div>
+          </div>
+
+        </div>
+
+<!-- ====================================================================== -->
+
+        <div id="viewer">
+
+          <a id="full-btn" class="collapser open" target="#ui">toggle toolbar</a>
+          <img id="loading" src="img/loading.gif"></img>
+
+          <!-- viewer section -->
+          <div id="rich-viewer"></div>
+          <pre id="plain-viewer"></pre>
+
+        </div>
+
+<!-- ====================================================================== -->
+
+      </td>
+      <td class="col4 row1"></td>
+    </tr>
+    <tr>
+      <td class="col0 row2">&nbsp;</td>
+      <td class="col4 row2"></td>
+    </tr>
+    <tr>
+      <td class="col0 row3"></td>
+      <td class="col4 row3"></td>
+    </tr>
+    <tr>
+      <td class="col0 row4"></td>
+      <td class="col1 row4"></td>
+      <td class="col2 row4"></td>
+      <td class="col3 row4"></td>
+      <td class="col4 row4"></td>
+    </tr>
+  </tbody>
+  </table>
+
+</body>
+
+</html>
+

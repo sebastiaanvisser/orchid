@@ -1,0 +1,260 @@
+//{ for syntax highlighting css-like in vim
+
+panelBg                 = #d6d6d6
+uiFont                  = "Helvetica Neue", Helvetica, Arial, sans-serif
+
+link                    = #b47
+linkHover               = #305
+linkDisabled            = #999
+
+collapserClosed         = #999
+collapserOpened         = #305
+
+opter                   = #999
+optedBg                 = #fff
+optionBgHover           = #ddd
+
+#ui:
+
+  & > div:
+    background          : $panelBg url('../img/shadow42.png') repeat-x 0 (-30px)
+    padding             : 0.8em
+    border-bottom       : solid 2px #fff
+
+  *:
+    font-family         : $uiFont
+
+.find:
+  border              : solid 8px #a47
+  position            : fixed
+
+#format, #auth, #signup, #history, #editor, #search:
+    display             : none
+
+#ui:
+
+  table:
+    width             : 100%
+    font-size         : 0.7em
+    line-height       : 1.3em
+
+    td, th:
+      padding           : 0.4em
+      padding-left      : 2em
+      vertical-align    : top
+      font-size         : 1.1em
+
+    .current td:
+      background        : #fff
+
+    td:
+      background        : #eee
+      text-align        : left
+      border-top        : solid 1px #ccc
+      & + td:
+        background      : #eee url('../img/shadow24.png') repeat-y (-40px) 0
+        padding-left    : 2em
+
+    th:
+      background        : #ddd
+      text-align        : left
+      border-bottom     : solid 1px #bbb
+
+    #author:
+      width             : 200px
+
+    #modified:
+      width             : 220px
+
+    a:
+      color             : #b47
+      text-decoration   : none
+      cursor            : pointer
+      &:hover:
+        color           : #305
+
+  a:
+    margin-right        : 0.8em
+    margin-bottom       : 0.4em
+    padding             : 0.4em
+
+    color               : $link
+    font-size           : 1.0em
+    text-decoration     : none
+
+    cursor              : pointer
+
+    span:
+      font-size         : 0.7em
+
+    &:hover:
+      color             : $linkHover
+
+    &.disabled:
+      color             : $linkDisabled
+      cursor            : default
+
+    &.collapser:
+      &:before:
+        color           : $collapserClosed
+        content         : '▸ '
+      &.open:before:
+        color           : $collapserOpened
+        content         : '▾ '
+
+    &.option:
+      &.opted:
+        background      : $optedBg
+        cursor          : default
+        &:before:
+          color         : #305
+          content       : '+ '
+        &:hover:
+          background    : $optedBg
+      &:before:
+        color           : $opter
+        content         : '+ '
+      &:hover:
+        background      : $optionBgHover
+
+  input:
+    background          : #fff url('../img/shadow02.png') repeat-x 0 -20px
+    padding             : 0.2em
+    margin-right        : 1em
+    width               : 18em
+    border              : none
+    color               : #555
+    font->
+      style             : italic
+      size              : 0.9em
+    &:focus:
+      background        : #fff url('../img/shadow02.png') repeat-x 0 -15px
+      color             : #a47
+      font-style        : normal
+    &.full:
+      color             : #a47
+      font-style        : normal
+
+    &.checkbox:
+      color             : red
+
+  textarea:
+    background          : #bbb url('../img/shadow24.png') repeat-y (-30px) 0
+    width               : 100%
+    min-height          : 320px
+    border              : none
+    margin-bottom       : 1.8em
+    font->
+      family            : 'Courier', Fixed
+      size              : 0.8em
+    line-height         : 1.3em
+
+  .status:
+    padding             : 0.2em
+    color               : #080
+    font-size           : 1.0em
+    text-align          : right
+    margin-top          : -1.65em
+
+    &.error:
+      color             : #800
+
+    span:
+      font-size         : 0.8em
+      font-weight       : normal
+
+  br:
+    margin-bottom       : 1.2em
+
+// ---- specific UI components ------------------------------------------------
+
+  #history:
+    background          : #ccc
+    border-bottom       : solid 2px #fff
+    display             : none
+
+    #author:
+      width             : 200px
+
+    #modified:
+      width             : 220px
+
+    .status:
+      display           : block
+      float             : none
+      text-align        : right
+      margin-top        : 0
+
+  #info:
+    font-size           : 0.8em
+    color               : #005
+    font-style          : italic
+    span:
+      color             : #305
+      font-style        : normal
+      font-weight       : bold
+      padding-right     : 1em
+      i:
+        color           : #888
+        font-weight     : normal
+
+  #auth:
+    #user-ui:
+      display           : none
+    #username:
+      &, #password:
+        margin-right    : 1em
+
+  #signup:
+    #su-username:
+      &, #su-password:
+        margin-right    : 1em
+
+  #editor #change, #editor #rename:
+    margin-bottom       : 1em
+    width               : 100%
+    display             : block
+
+  #format:
+    span:
+      color             : #305
+      font-size         : 1.0em
+      margin-right      : 2em
+    a.option:
+      margin->
+        left            : 0.4em
+        right           : 0
+
+  #search:
+    #search-terms:
+      width             : 80%
+
+    table:
+      margin-top        : 1.6em
+
+    #resource:
+      width             : 280px
+
+    #linenumber:
+      width             : 40px
+
+// ---- additional UI elements ------------------------------------------------
+
+#full-btn:
+  margin->
+    top                 : 1em
+    left                : 1em
+  float                 : left
+  color                 : #222
+  opacity               : 0.5
+  font-size             : 0.8em
+  font-family           : $uiFont
+  text-decoration       : none
+  cursor                : pointer
+
+#loading:
+  margin->
+    top                 : 0.8em
+    right               : 1em
+  float                 : right
+

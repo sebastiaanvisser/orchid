@@ -1,0 +1,44 @@
+/* ---- hscolour ----------------------------------------------------------- */
+
+#rich-viewer pre {
+  background       : #fff;
+  padding          : 2em;
+  border-top       : solid 2px #aaa;
+  border-bottom    : solid 2px #aaa;
+  margin-bottom   : 1em;
+}
+
+.varop      { color : #960; font-weight : normal; }
+.keyglyph   { color : #960; font-weight : normal; }
+.definition { color : #005; font-weight : bold;   }
+.varid      { color : #444; font-weight : normal; }
+.keyword    { color : #000; font-weight : bold;   }
+.comment    { color : #44f; font-weight : normal; }
+.conid      { color : #000; font-weight : normal; }
+.num        { color : #00a; font-weight : normal; }
+.str        { color : #a00; font-weight : normal; }
+
+/* ---- latex formula ------------------------------------------------------ */
+
+#rich-viewer img.formula {
+  float            : none;
+}
+
+/* ---- table of contents -------------------------------------------------- */
+
+#rich-viewer .toc {
+  border-top       : solid 2px #fff;
+  border-bottom    : solid 2px #fff;
+  margin           : 3em;
+  padding          : 1.4em;
+}
+
+#rich-viewer .toc h2 {
+  padding-bottom   : 1em;
+}
+
+#rich-viewer .toc span {
+  amargin-top       : -10;
+  afloat            : right;
+}
+

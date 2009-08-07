@@ -1,0 +1,56 @@
+.page {
+  margin           : -3.0em auto 2em auto;
+}
+
+.page .col0,
+.page .col4 {
+  width            : 80px;
+}
+
+.page .row0.col1,
+.page .row0.col3,
+.page .row4.col1,
+.page .row4.col3 {
+  width            : 160px;
+}
+
+.page .row1.col0,
+.page .row1.col0,
+.page .row3.col4,
+.page .row3.col4 {
+  height           : 160px;
+}
+
+.page .row0,
+.page .row4 {
+  height           : 80px;
+}
+
+.page .row0.col0 { background : url('../img/shadow00.png') }
+.page .row0.col1 { background : url('../img/shadow01.png') }
+.page .row0.col2 { background : url('../img/shadow02.png') }
+.page .row0.col3 { background : url('../img/shadow03.png') }
+.page .row0.col4 { background : url('../img/shadow04.png') }
+
+.page .row1.col0 { background : url('../img/shadow10.png') }
+.page .row1.col4 { background : url('../img/shadow14.png') }
+.page .row2.col0 { background : url('../img/shadow20.png') }
+.page .row2.col4 { background : url('../img/shadow24.png') }
+.page .row3.col0 { background : url('../img/shadow30.png') }
+.page .row3.col4 { background : url('../img/shadow34.png') }
+
+.page .row4.col0 { background : url('../img/shadow40.png') }
+.page .row4.col1 { background : url('../img/shadow41.png') }
+.page .row4.col2 { background : url('../img/shadow42.png') }
+.page .row4.col3 { background : url('../img/shadow43.png') }
+.page .row4.col4 { background : url('../img/shadow44.png') }
+
+/* page background */
+
+#main {
+  width            : 54em;
+  border           : solid 8px #fff;
+  opacity          : 0.7;
+  background       : #ddd;
+}
+
