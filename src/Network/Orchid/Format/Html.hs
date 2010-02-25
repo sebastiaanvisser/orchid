@@ -4,7 +4,6 @@ import Control.Monad (liftM)
 
 import Data.FileStore (FileStore)
 import Network.Orchid.Core.Format
-import Network.Protocol.Uri
 import Text.Document.Document
 
 fHtml :: WikiFormat

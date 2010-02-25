@@ -4,7 +4,6 @@ import Text.XML.Light.Output
 
 import Data.FileStore (FileStore)
 import Network.Orchid.Core.Format
-import Network.Protocol.Uri
 import Text.Document.Document
 
 fXml :: WikiFormat

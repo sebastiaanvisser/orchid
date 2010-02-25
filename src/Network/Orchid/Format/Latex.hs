@@ -2,7 +2,6 @@ module Network.Orchid.Format.Latex (fLatex) where
 
 import Data.FileStore (FileStore)
 import Network.Orchid.Core.Format
-import Network.Protocol.Uri
 import Text.Document.Document
 
 fLatex :: WikiFormat

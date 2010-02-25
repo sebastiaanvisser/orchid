@@ -4,7 +4,6 @@ import Control.Monad (liftM)
 import Data.ByteString.Lazy hiding (writeFile)
 import Data.FileStore (FileStore)
 import Network.Orchid.Core.Format
-import Network.Protocol.Uri
 import Prelude hiding (readFile)
 import System.Process (waitForProcess, runProcess)
 import Text.Document.Document
@@ -18,7 +17,7 @@ pdf _ _ _ src = do
   writeFile "/tmp/tex-to-pdf.tex"
     $ either show toLaTeX
     $ fromWiki src
-  runProcess "pdflatex" ["-interaction=batchmode", "/tmp/tex-to-pdf.tex"]
+  _ <- runProcess "pdflatex" ["-interaction=batchmode", "/tmp/tex-to-pdf.tex"]
     (Just "/tmp") Nothing Nothing Nothing Nothing
     >>= waitForProcess
   liftM BinaryOutput $ readFile "/tmp/tex-to-pdf.pdf"

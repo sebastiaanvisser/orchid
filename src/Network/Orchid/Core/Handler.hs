@@ -1,22 +1,25 @@
-module Network.Orchid.Core.Handler (
-    FileStoreType (..)
-  , hRepository
-  , hViewer
-  , hWiki
-  , hWikiCustomViewer
-  ) where
+{-# LANGUAGE FlexibleContexts #-}
+module Network.Orchid.Core.Handler
+( FileStoreType (..)
+, hRepository
+, hViewer
+, hWiki
+, hWikiCustomViewer
+)
+where
 
+import Control.Applicative
 import Control.Monad.Trans
 import Control.Concurrent.STM
 import Control.Monad.State
 import Data.Record.Label
-import Misc.Commons ((.$))
-import Data.FileStore (FileStore (..), darcsFileStore, gitFileStore)
-import Network.Orchid.Core.Format (postfix)
-import Network.Orchid.Core.Liaison (hWikiStore, hWikiDeleteOrRename, hWikiRetrieve, hWikiSearch)
-import Network.Orchid.FormatRegister (wikiFormats)
-import Network.Protocol.Http (Method (..), Status (..), uri)
-import Network.Protocol.Uri ((/+), URI(..), path)
+import Misc.Commons
+import Data.FileStore hiding (NotFound)
+import Network.Orchid.Core.Format
+import Network.Orchid.Core.Liaison
+import Network.Orchid.FormatRegister
+import Network.Protocol.Http
+import Network.Protocol.Uri
 import Network.Salvia.Handler.ExtendedFileSystem
 import Network.Salvia.Handlers
 import Network.Salvia.Httpd
@@ -30,87 +33,81 @@ mkFileStore :: FileStoreType -> FilePath -> FileStore
 mkFileStore Git   = gitFileStore
 mkFileStore Darcs = darcsFileStore
 
-hPOST h = hMethodRouter [(POST, h)] (hError NotFound)
-
 -- todo: clean up this mess:
 
 hRepository
-  :: (Response m, Send m, Request m, Receive m, MonadIO m)
-  => FileStoreType -> FilePath -> FilePath -> UserDatabase b -> TUserSession a -> m ()
-hRepository kind repo workDir userdb session =
+  :: (BodyM Request m, HttpM' m, MonadIO m, SendM m, LoginM m p)
+  => FileStoreType -> FilePath -> FilePath -> m ()
+hRepository kind repo dir =
   let fs = mkFileStore kind repo in
-    hPath "/search" (hAuthorized userdb "search" (\_ -> const () `fmap` (hPOST $ hWikiSearch fs)) session)
+    hPath "/search" (post (hWikiSearch fs))
   $ hPrefix "/_" (hFileSystem (repo /+ "_"))
-  $ hFileTypeDispatcher hDirectoryResource
-  ( const
-  $ hWithoutDir repo
-  $ hWikiREST workDir userdb session fs)
-  repo 
+  $ hFileTypeDispatcher hDirectoryResource ( const $ hWithoutDir repo $ hWikiREST dir fs) repo 
 
 hViewer
-  :: (Request m, MonadIO m, Response m, Send m, Socket m)
+  :: (MonadIO m, HttpM' m, SendM m, QueueM m, BodyM Request m, Alternative m)
   => FilePath -> m ()
-hViewer dir = do
+hViewer dir =
   hPath "/"
-   .$ hFileResource (dir /+ "show.html")
-    $ hExtendedFileSystem dir
+   (hFileResource (dir /+ "show.html"))
+   (hExtendedFileSystem dir)
 
 hWiki
-  :: (MonadIO m, Receive m, Socket m, Response m, Send m, Request m)
-  => FileStoreType -> FilePath -> FilePath -> TVar (UserDatabase FilePath) -> TUserSession a -> m ()
-hWiki kind repo workDir userdb session = do
-  viewerDir <- liftIO $ getDataFileName "viewer"
-  hWikiCustomViewer viewerDir kind repo workDir userdb session
+  :: (MonadIO m, BodyM Request m, LoginM m p, Alternative m, QueueM m, SendM m, HttpM' m)
+  => FileStoreType -> FilePath -> FilePath -> m ()
+hWiki kind repo dir = do
+  viewerDir <- liftIO (getDataFileName "viewer")
+  hWikiCustomViewer viewerDir kind repo dir
 
 hWikiCustomViewer
-  :: (MonadIO m, Socket m, Response m, Send m, Request m, Receive m)
-  => FilePath -> FileStoreType -> FilePath -> FilePath -> TVar (UserDatabase FilePath) -> TUserSession a -> m ()
-hWikiCustomViewer viewerDir kind repo workDir tuserdb session = do
-  userdb <- liftIO . atomically $ readTVar tuserdb
+  :: (LoginM m p, Alternative m, QueueM m, SendM m, MonadIO m, HttpM' m, BodyM Request m)
+  => FilePath -> FileStoreType -> FilePath -> FilePath -> m ()
+hWikiCustomViewer viewerDir kind repo dir =
   hPrefix "/data"
-    (hRepository kind repo workDir userdb session)
-    (authHandlers tuserdb session $ hViewer viewerDir)
+    (hRepository kind repo dir)
+    (authHandlers (hViewer viewerDir))
 
-authHandlers
-  :: (MonadIO m, Receive m, Send m, Response m, Request m)
-  => TVar (UserDatabase FilePath) -> TUserSession a -> m () -> m ()
-authHandlers tuserdb session handler = do
-  userdb <- liftIO . atomically $ readTVar tuserdb
-  hPathRouter [
-      ("/loginfo", (hAuthorized userdb "loginfo" (const $ hLoginfo session) session) >> return ())
-    , ("/login",   (hPOST $ hLogin userdb session) >> return ())
-    , ("/logout",  (hPOST $ hLogout session) >> return ())
-    , ("/signup",   hAuthorized userdb "signup" (const (hPOST (hSignup tuserdb ["loginfo", "show", "edit", "create"]) >> return ())) session)
-    ] handler
+authHandlers :: (LoginM m p, HttpM' m, SendM m) => m () -> m ()
+authHandlers =
+  hPathRouter
+    [ ("/loginfo", authorized (Just "loginfo") forbidden (const loginfo))
+    , ("/login",   post (login forbidden (const ok)))
+    , ("/logout",  post logout)
+    , ("/signup",  post (signup ["loginfo", "show", "edit", "create"] forbidden (const ok)))
+    ]
+
+ok :: (HttpM Response m, SendM m) => m ()
+ok = hCustomError OK "ok dan!!!!"
+
+post :: (HttpM Response m, SendM m, HttpM Request m) => m () -> m ()
+post h = hMethod POST h (hError NotFound)
 
 -------- REST interface -------------------------------------------------------
 
 -- The wiki module will act as a REST interface by using the MethodRouter
 -- handler to dispatch on the HTTP request method.
 
+forbidden :: (HttpM Response m, SendM m) => m ()
+forbidden = hCustomError Forbidden "No authorized to perform this action"
+
 hWikiREST
-  :: (Request m, Receive m, MonadIO m, Send m, Response m)
-  => FilePath -> UserDatabase b -> TUserSession a -> FileStore -> m ()
-hWikiREST workDir userdb session filestore =
+  :: (HttpM' m, BodyM Request m, SendM m, MonadIO m, LoginM m p)
+  => FilePath -> FileStore -> m ()
+hWikiREST dir fs =
   hUri $ \uri ->
-  previewHandlers filestore workDir uri
-    $ actionHandlers  filestore workDir uri userdb session
+      previewHandlers fs dir uri
+    . actionHandlers  fs dir uri
     $ hError BadRequest
+  where
 
-actionHandlers
-  :: (Receive m, MonadIO m, Send m, Response m, Request m)
-  => FileStore -> FilePath -> URI -> UserDatabase b -> TUserSession a -> m () -> m ()
-actionHandlers filestore workDir uri userdb session =
-  hMethodRouter [
-    (GET,    hAuthorized userdb "show"   (const $ hWikiRetrieve filestore workDir False uri) session)
-  , (PUT,    hAuthorizedUser    "edit"   (flip (hWikiStore          filestore) uri) session)
-  , (DELETE, hAuthorizedUser    "delete" (flip (hWikiDeleteOrRename filestore) uri) session)
-  ]
+  previewHandlers fs dir uri = hPathRouter
+    $ map (\ext -> ("/preview." ++ ext, hWikiRetrieve fs dir True uri))
+    (map postfix wikiFormats) 
 
-previewHandlers
-  :: (Receive m, MonadIO m, Send m, Response m, Request m)
-  => FileStore -> FilePath -> URI -> m () -> m ()
-previewHandlers filestore workDir uri = hPathRouter (
-    map (\ext -> ("/preview." ++ ext, hWikiRetrieve filestore workDir True uri))
-  $ map postfix wikiFormats) 
+  actionHandlers fs dir uri =
+    hMethodRouter [
+      (GET,                                                   hWikiRetrieve       fs dir False uri )
+    , (PUT,    authorized (Just "edit")   forbidden (\user -> hWikiStore          fs user          uri))
+    , (DELETE, authorized (Just "delete") forbidden (\user -> hWikiDeleteOrRename fs user          uri))
+    ]
 
