@@ -7,23 +7,23 @@ module Network.Orchid.Core.Liaison (
   ) where
 
 import Control.Applicative
+import Control.Category
 import Control.Exception.Extensible
 import Control.Monad.State hiding (get)
-import Data.Encoding
-import Data.Encoding.UTF8
 import Data.FileStore hiding (NotFound)
 import Data.List hiding (delete)
 import Data.Record.Label
-import Misc.Commons
 import Network.Orchid.Core.Format (WikiFormat (..), Output (..))
 import Network.Orchid.FormatRegister
 import Network.Protocol.Http
 import Network.Protocol.Uri
+import Network.Protocol.Uri.Parser ()
 import Network.Salvia.Handlers
 import Network.Salvia.Httpd hiding (body)
-import qualified Data.ByteString.Lazy as B
 import Prelude hiding ((.), id)
-import Control.Category
+import Safe
+import qualified Data.ByteString.Lazy as B
+import qualified Data.ByteString.Lazy.UTF8 as U
 
 -------- showing wiki documents -----------------------------------------------
 
@@ -60,7 +60,7 @@ hWikiRetrieve filestore workDir b u = do
     Just s -> do
       b' <- liftIO $ (handler fmt) filestore workDir src s
       (body', enc) <- return $ case b' of
-        TextOutput   s' -> (encodeLazyByteString UTF8 s', Just "utf-8")
+        TextOutput   s' -> (U.fromString s', Just "utf-8")
         BinaryOutput bs -> (bs, Nothing)
 
       response $
@@ -82,7 +82,7 @@ hWikiDeleteOrRename filestore user u = do
     then hCustomError BadRequest errEmptyRev
     else do
       doc <- hRequestBodyStringUTF8
-      let aut = Author (get username user) "test" --(email user)
+      let aut = Author (get username user) (get email user)
           src = dropWhile (=='/') $ set extension Nothing $ get path u
       liftIO $ rename filestore src doc aut rev
 
@@ -100,7 +100,7 @@ hWikiStore filestore user u = do
 
     True  -> hCustomError BadRequest errEmptyRev
     False -> liftIO $ do
-      let aut = Author (get username user) "test" --(email user)
+      let aut = Author (get username user) (get email user)
           src = dropWhile (=='/') $ set extension Nothing $ get path u
       save filestore src aut rev doc
 
@@ -122,9 +122,9 @@ hWikiSearch filestore = do
 getSearchInfo :: Parameters -> Maybe (String, Bool, Bool, Bool)
 getSearchInfo p = do
   patterns   <- "patterns"   `lookup` p >>= id
-  wholewords <- "wholewords" `lookup` p >>= id >>= safeRead
-  matchall   <- "matchall"   `lookup` p >>= id >>= safeRead
-  ignorecase <- "ignorecase" `lookup` p >>= id >>= safeRead
+  wholewords <- "wholewords" `lookup` p >>= id >>= readMay
+  matchall   <- "matchall"   `lookup` p >>= id >>= readMay
+  ignorecase <- "ignorecase" `lookup` p >>= id >>= readMay
   return (patterns, wholewords, matchall, ignorecase)
 
 showMatch :: SearchMatch -> String
